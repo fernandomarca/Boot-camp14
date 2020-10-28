@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
 import api from './services/api';
 
 import Header from './components/Header';
@@ -15,8 +16,16 @@ function App() {
     });
   }, []);
 
-  function handleAddProject() {
-    setProjects([...projects, `Novo projeto ${Date.now()}`]);
+  async function handleAddProject() {
+
+    const response = await api.post('projects', {
+      title: `Novo projeto ${Date.now()}`,
+      owner: "Fernando"
+    });
+    // const project = response.data;
+    // console.log(response.data)
+
+    setProjects([...projects, response.data]);
   }
 
   return (
@@ -24,13 +33,13 @@ function App() {
       <Header title="Projects">
         <ul>
           {projects.map(project => (
-            <li key={project}>
-              {project}
+            <li key={project.id}>
+              {project.title}
             </li>
           ))}
         </ul>
-        <button type="button" onClick={handleAddProject} >Add Project</button>
       </Header>
+      <button type="button" onClick={handleAddProject} >Add Project</button>
     </>
   )
 }
